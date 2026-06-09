@@ -1,0 +1,196 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: demo-stocks
+  namespace: migratorydata
+  labels:
+    app: demo-stocks
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: demo-stocks
+  template:
+    metadata:
+      labels:
+        app: demo-stocks
+    spec:
+      containers:
+      - name: demo-stocks
+        image: kafkorama/demo-stocks:1.0.2
+        imagePullPolicy: Always
+        env:
+        - name: SERVER
+          value: "migratorydata-server-external:8800"
+        - name: PORTAL_KEY
+          value: "g4hD1hIgPDpcD//R22XFWXVEgt38Z5KI3QS9jHlnLnk="
+        - name: PORTAL_URL
+          value: "http://migratorydata-portal-internal:8080"
+        - name: SYMBOLS_GET
+          value: "/migratorydata/stocks/symbols"
+        - name: SYMBOLS
+          value: "/migratorydata/stocks/AWERQ,/migratorydata/stocks/WERZF,/migratorydata/stocks/QWZAF,/migratorydata/stocks/TEYDF,/migratorydata/stocks/TYUII,/migratorydata/stocks/XCVSD,/migratorydata/stocks/POUVB,/migratorydata/stocks/TYEWD,/migratorydata/stocks/WYWUI"
+        resources:
+          requests:
+            memory: "128Mi"
+            cpu: "100m"
+          limits:
+            memory: "256Mi"
+            cpu: "200m"
+      restartPolicy: Always
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: demo-traffic
+  namespace: migratorydata
+  labels:
+    app: demo-traffic
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: demo-traffic
+  template:
+    metadata:
+      labels:
+        app: demo-traffic
+    spec:
+      containers:
+      - name: demo-traffic
+        image: kafkorama/demo-traffic:1.0.2
+        imagePullPolicy: Always
+        env:
+        - name: SERVER
+          value: "migratorydata-server-external:8800"
+        - name: PORTAL_KEY
+          value: "g4hD1hIgPDpcD//R22XFWXVEgt38Z5KI3QS9jHlnLnk="
+        - name: PORTAL_URL
+          value: "http://migratorydata-portal-internal:8080"
+        - name: SUBJECT
+          value: "/migratorydata/traffic/brussels"
+        resources:
+          requests:
+            memory: "128Mi"
+            cpu: "100m"
+          limits:
+            memory: "256Mi"
+            cpu: "200m"
+      restartPolicy: Always
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: demo-cryptocurrency
+  namespace: migratorydata
+  labels:
+    app: demo-cryptocurrency
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: demo-cryptocurrency
+  template:
+    metadata:
+      labels:
+        app: demo-cryptocurrency
+    spec:
+      containers:
+      - name: demo-cryptocurrency
+        image: kafkorama/demo-cryptocurrency:1.0.2
+        imagePullPolicy: Always
+        env:
+        - name: SERVER
+          value: "migratorydata-server-external:8800"
+        - name: PORTAL_KEY
+          value: "g4hD1hIgPDpcD//R22XFWXVEgt38Z5KI3QS9jHlnLnk="
+        - name: PORTAL_URL
+          value: "http://migratorydata-portal-internal:8080"
+        - name: SUBJECT
+          value: "/migratorydata/cryptocurrency/rates"
+        resources:
+          requests:
+            memory: "128Mi"
+            cpu: "100m"
+          limits:
+            memory: "256Mi"
+            cpu: "200m"
+      restartPolicy: Always
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: demo-parking
+  namespace: migratorydata
+  labels:
+    app: demo-parking
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: demo-parking
+  template:
+    metadata:
+      labels:
+        app: demo-parking
+    spec:
+      containers:
+      - name: demo-parking
+        image: kafkorama/demo-parking:1.0.2
+        imagePullPolicy: Always
+        env:
+        - name: SERVER
+          value: "migratorydata-server-external:8800"
+        - name: PORTAL_KEY
+          value: "g4hD1hIgPDpcD//R22XFWXVEgt38Z5KI3QS9jHlnLnk="
+        - name: PORTAL_URL
+          value: "http://migratorydata-portal-internal:8080"
+        - name: SUBJECT
+          value: "/migratorydata/parking"
+        resources:
+          requests:
+            memory: "128Mi"
+            cpu: "100m"
+          limits:
+            memory: "256Mi"
+            cpu: "200m"
+      restartPolicy: Always
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: demo-seismic
+  namespace: migratorydata
+  labels:
+    app: demo-seismic
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: demo-seismic
+  template:
+    metadata:
+      labels:
+        app: demo-seismic
+    spec:
+      containers:
+      - name: demo-seismic
+        image: kafkorama/demo-seismic:1.0.2
+        imagePullPolicy: Always
+        env:
+        - name: SERVER
+          value: "migratorydata-server-external:8800"
+        - name: PORTAL_KEY
+          value: "g4hD1hIgPDpcD//R22XFWXVEgt38Z5KI3QS9jHlnLnk="
+        - name: PORTAL_URL
+          value: "http://migratorydata-portal-internal:8080"
+        - name: SUBJECT
+          value: "/migratorydata/seismic/info"
+        resources:
+          requests:
+            memory: "128Mi"
+            cpu: "100m"
+          limits:
+            memory: "256Mi"
+            cpu: "200m"
+      restartPolicy: Always

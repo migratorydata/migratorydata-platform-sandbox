@@ -1,0 +1,106 @@
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: migratorydata
+  name: migratorydata-server-external
+  labels:
+    app: migratorydata
+spec:
+  type: LoadBalancer
+  ports:
+    - name: client-port
+      port: 8800
+      protocol: TCP
+      targetPort: 8800
+  selector:
+    app: migratorydata
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: migratorydata-server-config
+  namespace: migratorydata
+  labels:
+    app: migratorydata
+data:
+  migratorydata.conf: |
+    LicenseKey = zczuvikp41d2jb2o7j6n
+
+    Memory = 128MB
+
+    Listen = *:8800
+
+    LogLevel=INFO
+    LogRotateLimit = 10 MB
+    LogFolder = logs
+
+    DocumentRoot = html
+
+    Entitlement=Portal
+    Portal.Url = http://migratorydata-portal-internal:8080
+    Portal.Password = my-password
+
+    Rest.Enable = true
+
+    Stats.LogInterval=5
+    Stats.PrettyPrint=true
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: migratorydata-server
+  namespace: migratorydata
+spec:
+  selector:
+    matchLabels:
+      app: migratorydata
+  replicas: 1 # Desired number of cluster nodes
+  template:
+    metadata:
+      labels:
+        app: migratorydata
+    spec:
+      containers:
+        - name: migratorydata-cluster
+          imagePullPolicy: Always
+          image: migratorydata/server:6.0.24
+          env:
+            - name: NODE_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: MIGRATORYDATA_GATEWAY_EXTRA_OPTS
+              value: "-DNodeName=$(NODE_NAME)"
+            - name: MIGRATORYDATA_GATEWAY_JAVA_GC_LOG_OPTS
+              value: "-XX:+PrintCommandLineFlags -XX:+PrintGC -XX:+PrintGCDetails -XX:+DisableExplicitGC -Dsun.rmi.dgc.client.gcInterval=0x7ffffffffffffff0 -Dsun.rmi.dgc.server.gcInterval=0x7ffffffffffffff0 -verbose:gc"
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "0.5"
+          ports:
+            - name: client-port
+              containerPort: 8800
+          readinessProbe:
+            tcpSocket:
+              port: 8800
+            initialDelaySeconds: 20
+            failureThreshold: 5
+            periodSeconds: 5
+          livenessProbe:
+            tcpSocket:
+              port: 8800
+            initialDelaySeconds: 10
+            failureThreshold: 5
+            periodSeconds: 5
+          volumeMounts:
+          - name: config-volume
+            mountPath: /migratorydata/migratorydata.conf
+            subPath: migratorydata.conf
+      volumes:
+      - name: config-volume
+        configMap:
+          name: migratorydata-server-config
+          items:
+          - key: migratorydata.conf
+            path: migratorydata.conf
+      restartPolicy: Always

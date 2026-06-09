@@ -1,0 +1,108 @@
+version: '3'
+
+services:
+
+  migratorydata-server:
+    image: migratorydata/server:6.0.24
+    restart: always
+    ports:
+      - "8800:8800"
+    networks:
+      - local-network
+    volumes:
+      - ./migratorydata/migratorydata.conf:/migratorydata/migratorydata.conf
+
+  migratorydata-portal:
+    image: migratorydata/portal:1.0.0
+    restart: always
+    ports:
+      - "8080:8080"
+    networks:
+      - local-network
+    volumes:
+      - ./data/db:/migratorydata-portal/data
+      - ./migratorydata-portal/migratorydata-portal.conf:/migratorydata-portal/migratorydata-portal.conf
+
+  demo-stocks:
+    image: kafkorama/demo-stocks:1.0.2
+    restart: always
+    depends_on:
+      - migratorydata-server
+    networks:
+      - local-network
+    environment:
+      - SERVER=migratorydata-server:8800
+      - PORTAL_KEY=g4hD1hIgPDpcD//R22XFWXVEgt38Z5KI3QS9jHlnLnk=
+      - PORTAL_URL=http://migratorydata-portal:8080
+      - SYMBOLS_GET=/migratorydata/demo/stocks/symbols
+      - SYMBOLS=/migratorydata/stocks/AWERQ,/migratorydata/stocks/WERZF,/migratorydata/stocks/QWZAF,/migratorydata/stocks/TEYDF,/migratorydata/stocks/TYUII,/migratorydata/stocks/XCVSD,/migratorydata/stocks/POUVB,/migratorydata/stocks/TYEWD,/migratorydata/stocks/WYWUI
+
+  demo-traffic:
+    image: kafkorama/demo-traffic:1.0.2
+    restart: always
+    depends_on:
+      - migratorydata-server
+    networks:
+      - local-network
+    environment:
+      - SERVER=migratorydata-server:8800
+      - PORTAL_KEY=g4hD1hIgPDpcD//R22XFWXVEgt38Z5KI3QS9jHlnLnk=
+      - PORTAL_URL=http://migratorydata-portal:8080
+      - SUBJECT=/migratorydata/traffic/brussels
+
+  demo-cryptocurrency:
+    image: kafkorama/demo-cryptocurrency:1.0.2
+    restart: always
+    depends_on:
+      - migratorydata-server
+    networks:
+      - local-network
+    environment:
+      - SERVER=migratorydata-server:8800
+      - PORTAL_KEY=g4hD1hIgPDpcD//R22XFWXVEgt38Z5KI3QS9jHlnLnk=
+      - PORTAL_URL=http://migratorydata-portal:8080
+      - SUBJECT=/migratorydata/cryptocurrency/rates
+
+  demo-parking:
+    image: kafkorama/demo-parking:1.0.2
+    restart: always
+    depends_on:
+      - migratorydata-server
+    networks:
+      - local-network
+    environment:
+      - SERVER=migratorydata-server:8800
+      - PORTAL_KEY=g4hD1hIgPDpcD//R22XFWXVEgt38Z5KI3QS9jHlnLnk=
+      - PORTAL_URL=http://migratorydata-portal:8080
+      - SUBJECT=/migratorydata/parking
+
+  demo-seismic:
+    image: kafkorama/demo-seismic:1.0.2
+    restart: always
+    depends_on:
+      - migratorydata-server
+    networks:
+      - local-network
+    environment:
+      - SERVER=migratorydata-server:8800
+      - PORTAL_KEY=g4hD1hIgPDpcD//R22XFWXVEgt38Z5KI3QS9jHlnLnk=
+      - PORTAL_URL=http://migratorydata-portal:8080
+      - SUBJECT=/migratorydata/seismic/info
+
+  demo-gamification:
+    image: kafkorama/demo-gamification:1.0.2
+    restart: always
+    depends_on:
+      - migratorydata-server
+    networks:
+      - local-network
+    environment:
+      - SERVER=migratorydata-server:8800
+      - PORTAL_KEY=g4hD1hIgPDpcD//R22XFWXVEgt38Z5KI3QS9jHlnLnk=
+      - PORTAL_URL=http://migratorydata-portal:8080
+      - SUBJECTS_PREFIX=/migratorydata/gamification
+
+networks:
+  local-network:
+    driver: bridge
+

@@ -1,0 +1,144 @@
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: migratorydata
+  name: migratorydata-portal-external
+  labels:
+    app: migratorydata-portal
+spec:
+  type: LoadBalancer
+  ports:
+    - name: portal-port
+      port: 8080
+      protocol: TCP
+      targetPort: 8080
+  selector:
+    app: migratorydata-portal
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: migratorydata-portal-internal
+  namespace: migratorydata
+spec:
+  type: ClusterIP
+  ports:
+  - port: 8080
+    targetPort: 8080
+    protocol: TCP
+    name: http
+  selector:
+    app: migratorydata-portal
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: migratorydata-portal-sqlite-pvc
+  namespace: migratorydata
+  labels:
+    app: migratorydata-portal
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 5Gi
+  storageClassName: local-path # Adjust based on your cluster's storage classes
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: migratorydata-portal-config
+  namespace: migratorydata
+  labels:
+    app: migratorydata-portal
+data:
+  migratorydata-portal.conf: |
+    memory=512 MB
+
+    log.folder=logs
+
+    portal.listen.ip=0.0.0.0
+    portal.listen.port=8080
+
+    # default user
+    portal.admin.email=admin@admin.com
+    portal.admin.password=password
+    portal.admin.organization=migratorydata
+    portal.verifyEmail=false
+
+    portal.url=http://migratorydata-portal-external:8080
+    portal.gateway.access.password=my-password
+
+    demo.apis = true
+    demo.key = g4hD1hIgPDpcD//R22XFWXVEgt38Z5KI3QS9jHlnLnk=
+
+    db.name=./data/migratorydata-portal.db
+    db.type=sqlite
+    db.driver.classpath=org.sqlite.JDBC
+
+    ### params related to MigratoryData Server
+    gateway.servers=127.0.0.1:8800
+    gateway.tls.enabled=false
+    gateway.auth.signature.type=hmac
+    gateway.auth.signature.hmac.secret=He39zDQW7RdkOcxe3L9qvoSQ/ef40BG6Ro4hrHDjE+U=
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: migratorydata-portal
+  namespace: migratorydata
+  labels:
+    app: migratorydata-portal
+spec:
+  replicas: 1  # Single pod 
+  selector:
+    matchLabels:
+      app: migratorydata-portal
+  template:
+    metadata:
+      labels:
+        app: migratorydata-portal
+    spec:
+      containers:
+      - name: migratorydata-portal
+        image: migratorydata/portal:1.0.0
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 8080
+          name: http
+        volumeMounts:
+        - name: sqlite-storage
+          mountPath: /data
+        - name: config-volume
+          mountPath: /migratorydata-portal/migratorydata-portal.conf
+          subPath: migratorydata-portal.conf
+        resources:
+          requests:
+            memory: "1Gi"
+            cpu: "500m"
+          limits:
+            memory: "2Gi"
+            cpu: "1000m"
+        livenessProbe:
+          httpGet:
+            path: /api/v1/health
+            port: 8080
+          initialDelaySeconds: 5
+        readinessProbe:
+          httpGet:
+            path: /api/v1/health
+            port: 8080
+          initialDelaySeconds: 5
+      volumes:
+      - name: sqlite-storage
+        persistentVolumeClaim:
+          claimName: migratorydata-portal-sqlite-pvc
+      - name: config-volume
+        configMap:
+          name: migratorydata-portal-config
+          items:
+          - key: migratorydata-portal.conf
+            path: migratorydata-portal.conf
+      restartPolicy: Always
