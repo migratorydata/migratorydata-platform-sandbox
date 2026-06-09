@@ -1,10 +1,10 @@
-# MigratoryData Platform — Deployment Demo
+## MigratoryData Platform — Deployment Demo
 
 This repository provides ready-to-use deployment configurations for the MigratoryData real-time messaging platform. Two deployment options are available: a **Docker Compose** setup for local development and a **Kubernetes** setup for cluster environments.
 
 ---
 
-## Components
+### Components
 
 | Component | Description | Port |
 |---|---|---|
@@ -14,9 +14,9 @@ This repository provides ready-to-use deployment configurations for the Migrator
 
 ---
 
-## Deployment Options
+### Deployment Options
 
-### Option 1 — Docker Compose
+#### Option 1 — Docker Compose
 
 Best for: **local development, quick evaluation.**
 
@@ -38,7 +38,7 @@ See [docker/README.md](docker/README.md) for the full setup guide, configuration
 
 ---
 
-### Option 2 — Kubernetes
+#### Option 2 — Kubernetes
 
 Best for: **cluster deployments, Minikube-based local testing.**
 
@@ -50,9 +50,9 @@ kubectl create namespace migratorydata
 kubectl config set-context --current --namespace=migratorydata
 
 # 2. Deploy Portal, Server, and demos
-kubectl apply -f kafkorama/01-portal.yaml
-kubectl apply -f kafkorama/02-migratorydata.yaml
-kubectl apply -f kafkorama/03-demos.yaml
+kubectl apply -f kubernetes/01-portal.yaml
+kubectl apply -f kubernetes/02-migratorydata.yaml
+kubectl apply -f kubernetes/03-demos.yaml
 
 # 3. Expose LoadBalancer services (Minikube only)
 minikube tunnel
@@ -61,11 +61,11 @@ minikube tunnel
 Once running, open the Portal at **http://127.0.0.1:8080** (`admin@admin.com` / `password`).  
 The MigratoryData Server is reachable at **127.0.0.1:8800**.
 
-See [kafkorama/README.md](kafkorama/README.md) for the full setup guide, manifest descriptions, and operational commands.
+See [kubernetes/README.md](kubernetes/README.md) for the full setup guide, manifest descriptions, and operational commands.
 
 ---
 
-## Security Notice
+### Security Notice
 
 All configuration files ship with default credentials and demo keys intended for **local use only**. Before any non-local or production deployment, change the following in both `migratorydata.conf` and `migratorydata-portal.conf`:
 

@@ -1,10 +1,10 @@
-# MigratoryData Platform — Docker Deployment
+## MigratoryData Platform — Docker Deployment
 
 A self-contained Docker Compose setup that runs the MigratoryData real-time messaging server, the MigratoryData Portal (admin UI), and a suite of live-data demo applications.
 
 ---
 
-## Directory Tree
+### Directory Tree
 
 ```
 docker/
@@ -22,10 +22,10 @@ docker/
 
 ---
 
-## Core Modules
+### Core Modules
 
-### `migratorydata-server`
-The MigratoryData real-time push server (`migratorydata-test:latest`). Handles WebSocket/HTTP connections from clients and pushes live updates to subscribers.
+#### `migratorydata-server`
+The MigratoryData real-time push server (`migratorydata/server:6.0.24`). Handles WebSocket/HTTP connections from clients and pushes live updates to subscribers.
 
 | Setting | Value |
 |---|---|
@@ -40,8 +40,8 @@ Configuration file: [`migratorydata/migratorydata.conf`](migratorydata/migratory
 
 ---
 
-### `migratorydata-portal`
-Web-based administration portal (`portal-test:latest`). Manages cluster configuration, client token revocation, and provides the demo dashboard.
+#### `migratorydata-portal`
+Web-based administration portal (`migratorydata/portal:1.0.0`). Manages cluster configuration, client token revocation, and provides the demo dashboard.
 
 | Setting | Value |
 |---|---|
@@ -57,13 +57,13 @@ Configuration file: [`migratorydata-portal/migratorydata-portal.conf`](migratory
 
 ---
 
-### Demo Data Publishers
+#### Demo Data Publishers
 
 Six demo services continuously publish live data to the MigratoryData server, providing ready-made subjects for demonstration purposes.
 
 ---
 
-## Prerequisites
+### Prerequisites
 
 - [Docker Engine](https://docs.docker.com/engine/install/) 20.10+
 - [Docker Compose](https://docs.docker.com/compose/install/) v2 (bundled with Docker Desktop)
@@ -77,16 +77,16 @@ docker compose version
 
 ---
 
-## Setup Instructions
+### Setup Instructions
 
-### 1. Clone the repository (if not already done)
+#### 1. Clone the repository (if not already done)
 
 ```bash
-git clone <repository-url>
-cd migratorydata-platforma-deployment-demo/docker
+git clone git@github.com:migratorydata/migratorydata-platform-sandbox.git
+cd migratorydata-platform-sandbox/docker
 ```
 
-### 2. (Optional) Review configuration files
+#### 2. (Optional) Review configuration files
 
 Before starting, inspect and adjust configuration as needed:
 
@@ -98,9 +98,9 @@ cat migratorydata/migratorydata.conf
 cat migratorydata-portal/migratorydata-portal.conf
 ```
 
-> **Security note:** The files ship with default credentials and keys intended for local demo use only. Change `portal.admin.password`, `portal.gateway.access.password`, and the HMAC secret before deploying in any non-local environment.
+> **Security note:** The files ship with default credentials and keys intended for local demo use only.
 
-### 3. Start the stack
+#### 3. Start the stack
 
 To run in detached (background) mode:
 
@@ -108,7 +108,7 @@ To run in detached (background) mode:
 docker compose up -d
 ```
 
-### 4. Stop the stack
+#### 4. Stop the stack
 
 Stop and remove containers:
 
@@ -118,9 +118,9 @@ docker compose down
 
 ---
 
-## Getting Started
+### Getting Started
 
-### Open the Portal
+#### Open the Portal
 
 Once the stack is running, open your browser and navigate to:
 
@@ -139,7 +139,7 @@ The portal dashboard displays live charts for all six demo data streams.
 
 ---
 
-### Inspect Running Services
+#### Inspect Running Services
 
 ```bash
 # List all running containers
@@ -154,7 +154,7 @@ docker compose logs -f migratorydata-portal
 
 ---
 
-## Network Architecture
+### Network Architecture
 
 All services communicate on an internal Docker bridge network (`local-network`). Only the following ports are published to the host:
 

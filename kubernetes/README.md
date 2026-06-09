@@ -1,15 +1,15 @@
-# MigratoryData Platform — Kubernetes Deployment
+## MigratoryData Platform — Kubernetes Deployment
 
 Deploys the complete MigratoryData real-time messaging stack — Portal, MigratoryData Server, and live-data demo publishers — on Kubernetes using a `migratorydata` namespace.
 
-> Reference: [Deploy on Kubernetes — Kafkorama Docs](https://kafkorama.com/docs/portal/deploy/kubernetes/)
+> Reference: [Deploy on Kubernetes — MigratoryData Docs](https://migratorydata.com/docs/portal/deploy/kubernetes/)
 
 ---
 
-## Directory Tree
+### Directory Tree
 
 ```
-kafkorama/
+kubernetes/
 ├── 01-portal.yaml          # MigratoryData Portal (Services, PVC, ConfigMap, Deployment)
 ├── 02-migratorydata.yaml   # MigratoryData Server (Service, ConfigMap, Deployment)
 ├── 03-demos.yaml           # Demo data publishers (stocks, traffic, crypto, parking, seismic)
@@ -18,7 +18,7 @@ kafkorama/
 
 ---
 
-## Architecture Overview
+### Architecture Overview
 
 ```
                     ┌─────────────────────────────────┐
@@ -51,7 +51,7 @@ kafkorama/
 
 ---
 
-## Prerequisites
+### Prerequisites
 
 - [kubectl](https://kubernetes.io/docs/tasks/tools/) configured for your target cluster
 - [Minikube](https://minikube.sigs.k8s.io/docs/start/) for local development
@@ -65,9 +65,9 @@ minikube version
 
 ---
 
-## Setup Instructions
+### Setup Instructions
 
-### 1. Start Minikube (local development only)
+#### 1. Start Minikube (local development only)
 
 ```bash
 minikube start
@@ -79,7 +79,7 @@ Optionally, open the Kubernetes dashboard:
 minikube dashboard
 ```
 
-### 2. Create the namespace
+#### 2. Create the namespace
 
 All resources are deployed into the `migratorydata` namespace:
 
@@ -93,7 +93,7 @@ Switch your active context to the new namespace so subsequent commands default t
 kubectl config set-context --current --namespace=migratorydata
 ```
 
-### 3. Deploy the Portal
+#### 3. Deploy the Portal
 
 Deploys the MigratoryData Portal with its external and internal Services, a 5 Gi PersistentVolumeClaim for the SQLite database, a ConfigMap for configuration, and the Portal Deployment.
 
@@ -103,7 +103,7 @@ kubectl apply -f 01-portal.yaml
 
 > **Note:** The `storageClassName: local-path` in the PVC spec may need to be adjusted to match the storage classes available in your cluster. Run `kubectl get storageclass` to list available classes.
 
-### 4. Deploy the MigratoryData Server
+#### 4. Deploy the MigratoryData Server
 
 Deploys the MigratoryData Server with a LoadBalancer Service and a ConfigMap-backed configuration:
 
@@ -111,7 +111,7 @@ Deploys the MigratoryData Server with a LoadBalancer Service and a ConfigMap-bac
 kubectl apply -f 02-migratorydata.yaml
 ```
 
-### 5. Deploy Demo Applications (optional)
+#### 5. Deploy Demo Applications (optional)
 
 Deploys five live-data publishers that continuously stream real-time data to the MigratoryData Server for demonstration purposes:
 
@@ -119,7 +119,7 @@ Deploys five live-data publishers that continuously stream real-time data to the
 kubectl apply -f 03-demos.yaml
 ```
 
-### 6. Expose LoadBalancer Services (Minikube only)
+#### 6. Expose LoadBalancer Services (Minikube only)
 
 Minikube does not automatically assign external IPs to LoadBalancer services. Run the tunnel in a separate terminal to enable access:
 
@@ -129,7 +129,7 @@ minikube tunnel
 
 ---
 
-## Verify Installation
+### Verify Installation
 
 Check that all pods reach `Running` status:
 
@@ -167,9 +167,9 @@ migratorydata-server-external     LoadBalancer   10.43.237.196   127.0.0.1     8
 
 ---
 
-## Getting Started
+### Getting Started
 
-### Open the Portal
+#### Open the Portal
 
 Navigate to the Portal in your browser:
 
@@ -186,45 +186,12 @@ Log in with the default credentials defined in the ConfigMap inside `01-portal.y
 
 > **Security:** Change the default admin password and all shared secrets before any non-local deployment.
 
-### Connect a Client to the MigratoryData Server
-
-The MigratoryData Server accepts WebSocket connections on port `8800`. Example using the JavaScript client:
-
-```javascript
-const client = new MigratoryDataClient();
-client.setEntitlement("http://127.0.0.1:8080", "<your-token>");
-client.setServers(["ws://127.0.0.1:8800"]);
-client.subscribe(["/migratorydata/stocks/AWERQ"], (message) => {
-  console.log("Received:", message.getData());
-});
-client.connect();
-```
-
-### Available Demo Subjects
-
-The demo publishers continuously stream data to these subjects:
-
-```
-/migratorydata/stocks/AWERQ
-/migratorydata/stocks/WERZF
-/migratorydata/stocks/QWZAF
-/migratorydata/stocks/TEYDF
-/migratorydata/stocks/TYUII
-/migratorydata/stocks/XCVSD
-/migratorydata/stocks/POUVB
-/migratorydata/stocks/TYEWD
-/migratorydata/stocks/WYWUI
-/migratorydata/traffic/brussels
-/migratorydata/cryptocurrency/rates
-/migratorydata/parking
-/migratorydata/seismic/info
-```
 
 ---
 
-## Useful Commands
+### Useful Commands
 
-### View logs
+#### View logs
 
 ```bash
 # Portal logs
@@ -234,19 +201,19 @@ kubectl logs -f deployment/migratorydata-portal
 kubectl logs -f deployment/migratorydata-server
 ```
 
-### Inspect a pod
+#### Inspect a pod
 
 ```bash
 kubectl describe pod <pod-name>
 ```
 
-### Open a shell inside a pod
+#### Open a shell inside a pod
 
 ```bash
 kubectl exec -it <pod-name> -- /bin/bash
 ```
 
-### Update configuration
+#### Update configuration
 
 Configuration is stored in ConfigMaps inside each manifest. To apply a config change:
 
@@ -267,7 +234,7 @@ kubectl rollout restart deployment/migratorydata-server
 
 ---
 
-## Uninstall
+### Uninstall
 
 Remove all resources by deleting the namespace:
 
