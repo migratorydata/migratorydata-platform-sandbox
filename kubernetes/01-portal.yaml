@@ -80,9 +80,6 @@ data:
     ### params related to MigratoryData Server
     gateway.servers=127.0.0.1:8800
     gateway.tls.enabled=false
-    gateway.auth.signature.type=hmac
-    gateway.auth.signature.hmac.secret=He39zDQW7RdkOcxe3L9qvoSQ/ef40BG6Ro4hrHDjE+U=
-
 ---
 apiVersion: apps/v1
 kind: Deployment

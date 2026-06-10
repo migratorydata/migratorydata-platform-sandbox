@@ -34,7 +34,7 @@ services:
       - SERVER=migratorydata-server:8800
       - PORTAL_KEY=g4hD1hIgPDpcD//R22XFWXVEgt38Z5KI3QS9jHlnLnk=
       - PORTAL_URL=http://migratorydata-portal:8080
-      - SYMBOLS_GET=/migratorydata/demo/stocks/symbols
+      - SYMBOLS_GET=/migratorydata/stocks/symbols
       - SYMBOLS=/migratorydata/stocks/AWERQ,/migratorydata/stocks/WERZF,/migratorydata/stocks/QWZAF,/migratorydata/stocks/TEYDF,/migratorydata/stocks/TYUII,/migratorydata/stocks/XCVSD,/migratorydata/stocks/POUVB,/migratorydata/stocks/TYEWD,/migratorydata/stocks/WYWUI
 
   demo-traffic:
