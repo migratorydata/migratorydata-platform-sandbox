@@ -101,7 +101,7 @@ spec:
       containers:
       - name: migratorydata-portal
         image: migratorydata/portal:1.0.0
-        imagePullPolicy: IfNotPresent
+        imagePullPolicy: Always
         ports:
         - containerPort: 8080
           name: http
