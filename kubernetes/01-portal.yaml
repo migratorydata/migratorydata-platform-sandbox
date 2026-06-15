@@ -54,31 +54,59 @@ metadata:
     app: migratorydata-portal
 data:
   migratorydata-portal.conf: |
+    # Specifies the maximum memory (in megabytes) to be used by the JVM (-Xmx). Default: 128 MB. Required.
     memory=512 MB
 
+    # Folder where logs will be written. Default: logs (relative to start directory). Optional.
     log.folder=logs
 
+
+    # IP address for the portal to listen on. Default: 0.0.0.0. Optional.
     portal.listen.ip=0.0.0.0
+    
+    # Port for the portal to listen on. Default: 8080. Optional.
     portal.listen.port=8080
 
-    # default user
+    # Email of the administrator account created on first startup. Required at startup.
     portal.admin.email=admin@admin.com
+    
+    # Password for the default admin user. Required at startup.
     portal.admin.password=password
+    
+    # Default organization for the admin account. If not set, a default organization is created automatically. Optional.
     portal.admin.organization=migratorydata
+    
+    # Enable or disable email verification for new users. Set to true to require verification. Default: false. Optional.
     portal.verifyEmail=false
 
+    # Public URL of the portal used in emails and links sent to users. Optional.
     portal.url=http://migratorydata-portal-external:8080
+    
+    # Password used by the Gateway to authenticate with the Portal for retrieving configs, sending logs and stats. Required.
     portal.gateway.access.password=my-password
 
+
+    # Enables demo APIs for testing and onboarding. Must be disabled in production. Default: true. Optional.
     demo.apis = true
+    
+    # Key used by the Portal and client SDKs to authorize demo operations without a full user account. Optional.
     demo.key = g4hD1hIgPDpcD//R22XFWXVEgt38Z5KI3QS9jHlnLnk=
 
+
+    # Path to the SQLite database file or database name for MySQL/PostgreSQL. Default: ./data/push-cloud.db. Required.
     db.name=./data/migratorydata-portal.db
+
+    # Type of database backend. Supported values: sqlite, mysql, postgres. Default: sqlite. Required.
     db.type=sqlite
+
+    # Fully qualified class name of the JDBC driver (sqlite: org.sqlite.JDBC, mysql: com.mysql.cj.jdbc.Driver, postgres: org.postgresql.Driver). Required.
     db.driver.classpath=org.sqlite.JDBC
 
-    ### params related to MigratoryData Server
+
+    # List of Gateway server addresses used by the Portal for debug console, demo features, and client SDK code generation. Required.
     gateway.servers=127.0.0.1:8800
+
+    # Determines whether the Portal connects to Gateway servers using TLS. Default: true. Optional.
     gateway.tls.enabled=false
 ---
 apiVersion: apps/v1

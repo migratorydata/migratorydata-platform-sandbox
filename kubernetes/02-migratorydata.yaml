@@ -24,26 +24,37 @@ metadata:
     app: migratorydata
 data:
   migratorydata.conf: |
+    # A string representing the license key issued by MigratoryData for evaluation, development, or production usage. Required.
     LicenseKey = zczuvikp41d2jb2o7j6n
 
+    # Specifies the maximum memory (in megabytes) to be used by the JVM (-Xmx). In production, use at least 8192 MB. Required.
     Memory = 128MB
 
+    # A comma-separated list of addresses to listen for client connections (format: IP:Port or DNS:Port). Wildcard * binds to all interfaces. Optional.
     Listen = *:8800
 
+    # The verbosity level of the logs. Available levels: TRACE, DEBUG, INFO (recommended), WARN, ERROR. Default: INFO. Optional.
     LogLevel=INFO
+    # The maximum size of a log file before rotation. Expressed in KB, MB, or GB. Default: 10 MB. Optional.
     LogRotateLimit = 10 MB
+    # The folder where the logs will be written. Default: logs (relative to the start directory). Optional.
     LogFolder = logs
 
+    # Folder from which MigratoryData will serve static files. Default: html. For development use only; use Nginx/Apache in production. Optional.
     DocumentRoot = html
 
+    # Specifies the entitlement type: None, Basic, JWT, Custom, or Portal. When set to Portal, use Portal.Url and Portal.Password. Default: Basic. Optional.
     Entitlement=Portal
+    # The URL of the MigratoryData Portal instance. The Server connects here to retrieve entitlement and configuration data. Required if Entitlement=Portal.
     Portal.Url = http://migratorydata-portal-internal:8080
+    # The password used by the Server to authenticate with the Portal. Must match portal.gateway.access.password in the Portal config. Required if Entitlement=Portal.
     Portal.Password = my-password
 
+    # Enables the built-in REST API for publishing messages via HTTP. Default: false. Optional.
     Rest.Enable = true
 
+    # Time interval in seconds at which system statistics are logged. Minimum value: 5. Default: 60. Optional.
     Stats.LogInterval=5
-    Stats.PrettyPrint=true
 ---
 apiVersion: apps/v1
 kind: Deployment
