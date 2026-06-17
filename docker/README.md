@@ -41,7 +41,7 @@ Configuration file: [`migratorydata/migratorydata.conf`](migratorydata/migratory
 ---
 
 #### `migratorydata-portal`
-Web-based administration portal (`migratorydata/portal:1.0.0`). Manages cluster configuration, client token revocation, and provides the demo dashboard.
+Web-based administration portal (`migratorydata/portal:1.0.4`). Manages cluster configuration, client token revocation, and provides the demo dashboard.
 
 | Setting | Value |
 |---|---|

@@ -13,7 +13,7 @@ services:
       - ./migratorydata/migratorydata.conf:/migratorydata/migratorydata.conf
 
   migratorydata-portal:
-    image: migratorydata/portal:1.0.0
+    image: migratorydata/portal:1.0.4
     restart: always
     ports:
       - "8080:8080"
